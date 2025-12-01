@@ -33,6 +33,14 @@ type FormValues = {
 
 const preferences: Preferences.CreateEvent = getPreferenceValues();
 
+/**
+ * Normalize a user-entered duration string into a minute count.
+ *
+ * Trims input and treats a plain integer string (e.g., "30") as minutes; otherwise delegates to the duration parser.
+ *
+ * @param value - The raw duration input provided by the user (may be empty or undefined)
+ * @returns The duration expressed in minutes, `null` if the input cannot be parsed as a duration, or `undefined` when `value` is empty or undefined
+ */
 function parseDurationAsMinutesForPlainNumbers(value: string | undefined): number | null | undefined {
   if (value === undefined) {
     return undefined;
@@ -51,6 +59,12 @@ function parseDurationAsMinutesForPlainNumbers(value: string | undefined): numbe
   }
 }
 
+/**
+ * Format a Date as a local `YYYY-MM-DD` string.
+ *
+ * @param date - The local date to format
+ * @returns The date formatted as `YYYY-MM-DD`
+ */
 function toLocalYMD(date: Date): string {
   const y = date.getFullYear();
   const m = String(date.getMonth() + 1).padStart(2, "0");
@@ -58,6 +72,15 @@ function toLocalYMD(date: Date): string {
   return `${y}-${m}-${d}`;
 }
 
+/**
+ * Renders the "Create Event" command form and handles creating calendar events using Google Calendar APIs.
+ *
+ * The form includes fields for calendar selection, title, start date/time, event time (timed or all-day), duration (when timed),
+ * guests, conferencing provider, and description; submitting the form creates the event and shows success/failure toasts.
+ *
+ * @param props - Launch props whose optional launchContext can prefill form values (`FormValues`)
+ * @returns The JSX element for the create-event form component
+ */
 function Command(props: LaunchProps<{ launchContext: FormValues }>) {
   const { calendar } = useGoogleAPIs();
   const [calendarId, setCalendarId] = useState("primary");
